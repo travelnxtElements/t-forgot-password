@@ -1,0 +1,40 @@
+{
+  "name": "t-forgot-password",
+  "version": "0.0.0",
+  "authors": [
+    "Sounak Pal <talk2sounak@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "Polymer",
+    "Web",
+    "Components"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "t-text-container": "travelnxtElements/t-text-container#master",
+    "t-button": "atomelements/t-button#master",
+    "t-password-input": "atomelements/t-password-input#master",
+    "t-input": "atomelements/t-input#master",
+    "neon-animation": "PolymerElements/neon-animation#^1.1.0"
+  },
+  "resolutions":{
+    "paper-styles":"~1.1.3"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "webcomponentsjs": "~0.7.14",
+    "iron-component-page": "PolymerElements/iron-component-page#~1.0.6"
+  }
+}
