@@ -8,6 +8,9 @@
     <title>t-forgot-password demo</title>
     <link rel="import" href="../../polymer/polymer.html">
     <link rel="import" href="../t-get-user-api.html">
+    <link rel="import" href="../t-verify-secret-key-api.html">
+    <link rel="import" href="../t-reset-password-api.html">
+    <link rel="import" href="../t-reset-password-mail-api.html">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../t-shared-components/theme.html">
     <link rel="import" href="../t-forgot-password.html">
@@ -37,23 +40,60 @@
         <paper-toast id="toast"></paper-toast>
 
         <t-mystique-auth 
-            id="tokenCall" 
-            name="nxtb2bsite" 
-            url="http://dev-mystiquecode.tavisca.com/api/authentication/authenticate/context" 
+            id="tokenCall"            
+            name="mystiquedemo"
+            url="http://dev-mystiquecode.tavisca.com/api/authentication/authenticate/context"
             token-response="{{token}}">
         </t-mystique-auth>
 
+        <!-- <t-mystique-auth 
+            id="tokenCall"            
+            name="nxtb2bsite"
+            url="http://demo.travelnxt.com/api/authentication/authenticate/context"
+            token-response="{{token}}">
+        </t-mystique-auth> -->
+
         <t-get-user-api 
             id="getUserApi" 
-            on-get-user-api-success="getUserSuccessEventHandler" 
-            on-t-get-user-api-error="registerFailureEventHandler" 
+            on-t-get-user-api-success="getUserSuccessEventHandler" 
+            on-t-get-user-api-error="getUserFailureEventHandler" 
             api-base-url="http://dev-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-get-user-api>
 
+        <t-verify-secret-key-api 
+            id="verifySecret" 
+            on-t-verify-secret-key-api-success="verifySecretSuccessEventHandler" 
+            on-t-verify-secret-key-api-error="verifySecretFailureEventHandler" 
+            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-relative-url="api/user" 
+            auth-token="{{token.authenticationToken}}">
+        </t-verify-secret-key-api>
+
+        <t-reset-password-api
+            id="updatePassword" 
+            on-t-reset-password-api-success="updatePasswordSuccessEventHandler" 
+            on-t-reset-password-api-error="updatePasswordFailureEventHandler" 
+            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-relative-url="api/user" 
+            auth-token="{{token.authenticationToken}}">
+        </t-reset-password-api>
+
+        <t-reset-password-mail-api
+            id="sendMail" 
+            on-t-reset-password-mail-api-success="sendMailSuccessEventHandler" 
+            on-t-reset-password-mail-api-error="sendMailFailureEventHandler" 
+            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-relative-url="api/user" 
+            auth-token="{{token.authenticationToken}}">
+        </t-reset-password-mail-api>
+
         <t-forgot-password
             id="fgtPassword"
+            on-t-forgot-password-send-email="sendMailEventHandler"
+            on-t-forgot-password-update-password="updatePasswordEventHandler"
+            on-t-forgot-password-verify-secret="verifySecretEventHandler"
             on-t-forgot-password-get-user="getUserEventHandler">
         </t-forgot-password>
 
@@ -67,18 +107,75 @@
         this.$.loader.active = true;
         this.$.getUserApi.getUser(data);
     };
-
     template.getUserSuccessEventHandler =function (e, data) {
-        this.$.loader.active = true;
-        this.$.toast.text = "user details fetched successfully!";
+        this.$.loader.active = false;
+        this.$.toast.text = data.result 
+                            ? "user details fetched successfully!" 
+                            : "No security question found, sending password reset email.";
         this.$.toast.open();
-        this.$.fgtPassword.onGetUserResponse(data);
-    };
 
-    template.registerFailureEventHandler =function (e, data) {
+        if(data.result)
+            this.$.fgtPassword.onGetUserResponse(data);
+        else
+            this.$.fgtPassword.onEmailSent(data);
+    };
+    template.getUserFailureEventHandler =function (e, data) {
         this.$.loader.active = false;
         this.$.toast.text = "User not found";
         this.$.toast.open();
+        this.$.fgtPassword.onGetUserResponse();
+    };
+
+    template.verifySecretEventHandler =function (e, data) {
+        this.$.loader.active = true;
+        this.$.verifySecret.verifyAnswer(data);
+    };
+    template.verifySecretSuccessEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Answer verified successfully!";
+        this.$.toast.open();
+        this.$.fgtPassword.onGetSecretAnswerResponse(data);
+    };
+    template.verifySecretFailureEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Incorrect answer";
+        this.$.toast.open();
+        this.$.fgtPassword.onGetSecretAnswerResponse();
+    };
+
+
+    template.updatePasswordEventHandler =function (e, data) {
+        this.$.loader.active = true;
+        this.$.updatePassword.updatePassword(data);
+    };
+    template.updatePasswordSuccessEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Password changed successfully!";
+        this.$.toast.open();
+        this.$.fgtPassword.onPasswordResetResponse(data);
+    };
+    template.updatePasswordFailureEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Failed to update the password";
+        this.$.toast.open();
+        this.$.fgtPassword.onPasswordResetResponse();
+    };
+
+    template.sendMailEventHandler =function (e, data) {
+        this.$.loader.active = true;
+        this.$.sendMail.sendMail(data);
+    };
+    template.sendMailSuccessEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Mail sent successfully!";
+        this.$.toast.open();
+        this.$.fgtPassword._onEmailSent(data);
+    };
+    template.sendMailFailureEventHandler =function (e, data) {
+        this.$.loader.active = false;
+        this.$.toast.text = "Failed to send mail";
+        this.$.toast.open();
+        this.$.fgtPassword.onPasswordResetResponse();
     };
 
 })();
