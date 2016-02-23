@@ -41,14 +41,14 @@
 
         <t-mystique-auth 
             id="tokenCall"            
-            name="mystiquedemo"
-            url="http://dev-mystiquecode.tavisca.com/api/authentication/authenticate/context"
+            name="nxtb2bsite"
+            url="http://qa-mystiquecode.tavisca.com/api/authentication/authenticate/context"
             token-response="{{token}}">
-        </t-mystique-auth>
+        </t-mystique-auth> 
 
         <!-- <t-mystique-auth 
             id="tokenCall"            
-            name="nxtb2bsite"
+            name="mystiquedemo"
             url="http://demo.travelnxt.com/api/authentication/authenticate/context"
             token-response="{{token}}">
         </t-mystique-auth> -->
@@ -56,8 +56,8 @@
         <t-get-user-api 
             id="getUserApi" 
             on-t-get-user-api-success="getUserSuccessEventHandler" 
-            on-t-get-user-api-error="getUserFailureEventHandler" 
-            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            on-t-get-user-api-error="getUserFailureEventHandler"
+            api-base-url="http://qa-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-get-user-api>
@@ -66,7 +66,7 @@
             id="verifySecret" 
             on-t-verify-secret-key-api-success="verifySecretSuccessEventHandler" 
             on-t-verify-secret-key-api-error="verifySecretFailureEventHandler" 
-            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-base-url="http://qa-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-verify-secret-key-api>
@@ -75,7 +75,7 @@
             id="updatePassword" 
             on-t-reset-password-api-success="updatePasswordSuccessEventHandler" 
             on-t-reset-password-api-error="updatePasswordFailureEventHandler" 
-            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-base-url="http://qa-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-reset-password-api>
@@ -84,7 +84,7 @@
             id="sendMail" 
             on-t-reset-password-mail-api-success="sendMailSuccessEventHandler" 
             on-t-reset-password-mail-api-error="sendMailFailureEventHandler" 
-            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-base-url="http://qa-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-reset-password-mail-api>
@@ -169,7 +169,7 @@
         this.$.loader.active = false;
         this.$.toast.text = "Mail sent successfully!";
         this.$.toast.open();
-        this.$.fgtPassword._onEmailSent(data);
+        this.$.fgtPassword.onEmailSent(data);
     };
     template.sendMailFailureEventHandler =function (e, data) {
         this.$.loader.active = false;
@@ -177,7 +177,6 @@
         this.$.toast.open();
         this.$.fgtPassword.onPasswordResetResponse();
     };
-
 })();
 </script>
 
