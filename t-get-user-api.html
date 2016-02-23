@@ -1,6 +1,30 @@
 <link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../t-shared-lib/t-provider-behavior.html">
+
+<!--
+    `t-get-user-api` api component is used to get user secret key.
+
+    following events are fired by this component
+        1. 't-get-user-api-success' - fired om successful api call.
+        2. 't-get-user-api-error' - fired when api call is faield.
+
+    Uses TravelNxt.Behaviors.ProviderBehavior as its default behavior
+
+Example:
+        without event handlers
+        <t-get-user-api></t-get-user-api>
+
+        with event handlers
+        <t-get-user-api 
+            id="getUserApi" 
+            on-t-get-user-api-success="getUserSuccessEventHandler" 
+            on-t-get-user-api-error="getUserFailureEventHandler" 
+            api-base-url="http://dev-mystiquecode.tavisca.com/"
+            api-relative-url="api/user" 
+            auth-token="{{token.authenticationToken}}">
+        </t-get-user-api>-->
+
 <dom-module id="t-get-user-api">
     <template>
         <iron-ajax id="ajaxCall" method="GET" content-type="application/json" handle-as="json" verbose>
@@ -18,7 +42,18 @@ Polymer({
         'ajaxCall.error': '_errorCallback'
     },
 
+    /* *
+     * This method retrieves secret question added in user profile if exists
+     * Returns empty string if secret question is not configured.
+     * Expects an object with userName property as required field.
+     */
     getUser: function(data) {
+
+        if (!data || !data.userName) {
+            console.error('userName can\'t be empty');
+            return;
+        }
+
         //validate API meta before making a call
         if (this._validateApiMeta()) {
             this.apiRelativeUrl = "api/User/get/secretkey/" + data.userName;
