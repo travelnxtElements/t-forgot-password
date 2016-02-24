@@ -105,8 +105,9 @@
 
     template.getUserEventHandler =function (e, data) {
         this.$.loader.active = true;
-        this.$.getUserApi.getUser(data);
+        this.$.getUserApi.onGetSecretKey(e);
     };
+
     template.getUserSuccessEventHandler =function (e, data) {
         this.$.loader.active = false;
         this.$.toast.text = data.result 
