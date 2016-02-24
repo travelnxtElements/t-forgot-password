@@ -35,29 +35,72 @@ Polymer({
 
     behaviors: [TravelNxt.Behaviors.ProviderBehavior],
 
+    properties: {
+        
+        /*
+        If provided then that specific user details will be fetched, else will try to get logged in user details 
+         */
+        username: String,
+
+        /*
+        If provided then that specific user profile section will be fetched else will get full details
+         */
+        section: String
+
+    },
+
     listeners: {
         'ajaxCall.response': '_successCallback',
         'ajaxCall.error': '_errorCallback'
     },
 
-    /* *
+    getUser: function(data) {
+        //validate API meta before making a call
+        if (this._validateApiMeta()) {
+            this.apiRelativeUrl = this._getRelativeUrl();
+            this.$.ajaxCall.url = this._getUrl();
+            this.$.ajaxCall.generateRequest();
+        }
+    },
+
+    onGetUser: function(e) {
+        this.username =  e.detail.username;
+        this.section =  e.detail.section;
+        this.getUser();
+    },
+
+    /* 
      * This method retrieves secret question added in user profile if exists
      * Returns empty string if secret question is not configured.
      * Expects an object with userName property as required field.
      */
-    getUser: function(data) {
-
-        if (!data || !data.userName) {
-            console.error('userName can\'t be empty');
-            return;
-        }
+    
+    //TODO: get user sections api is not working, need to check with mystique team    
+    getSecretKey: function() {
 
         //validate API meta before making a call
         if (this._validateApiMeta()) {
-            this.apiRelativeUrl = "api/User/get/secretkey/" + data.userName;
+            this.apiRelativeUrl = "api/User/get/secretkey/" + this.username;
             this.$.ajaxCall.url = this._getUrl();
             this.$.ajaxCall.generateRequest();
         }
+    },
+
+    onGetSecretKey: function(e) {
+        this.username = e.detail.username;
+        this.getSecretKey();
+    },
+
+
+    _getRelativeUrl: function(){
+        var url = 'api/User/get/';
+        if(this.username){
+            url+= 'username/' + this.username+ '/';
+        }
+        if(this.section){
+            url+= this.section;
+        }
+        return url;
     },
 
     _successCallback: function(event) {
