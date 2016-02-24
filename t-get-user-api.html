@@ -56,8 +56,8 @@ Polymer({
 
     getUser: function(data) {
         //validate API meta before making a call
-        if (this._validateApiMeta()) {
-            this.apiRelativeUrl = this._getRelativeUrl();
+        this.apiRelativeUrl = this._getRelativeUrl();
+        if (this._validateApiMeta()) {            
             this.$.ajaxCall.url = this._getUrl();
             this.$.ajaxCall.generateRequest();
         }
@@ -77,10 +77,9 @@ Polymer({
     
     //TODO: get user sections api is not working, need to check with mystique team    
     getSecretKey: function() {
-
+        this.apiRelativeUrl = "api/User/get/secretkey/" + this.username;
         //validate API meta before making a call
-        if (this._validateApiMeta()) {
-            this.apiRelativeUrl = "api/User/get/secretkey/" + this.username;
+        if (this._validateApiMeta()) {            
             this.$.ajaxCall.url = this._getUrl();
             this.$.ajaxCall.generateRequest();
         }
