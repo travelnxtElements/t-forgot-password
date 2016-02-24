@@ -1,7 +1,6 @@
 <link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../t-shared-lib/t-provider-behavior.html">
-
 <!--
     `t-get-user-api` api component is used to get user secret key.
 
@@ -24,7 +23,6 @@ Example:
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-get-user-api>-->
-
 <dom-module id="t-get-user-api">
     <template>
         <iron-ajax id="ajaxCall" method="GET" content-type="application/json" handle-as="json" verbose>
@@ -71,7 +69,10 @@ Polymer({
                 bubbles: true
             });
         else if (!event.detail.response.status.isSuccessful) {
-            this.fire('t-get-user-api-error', event.detail.response.status, {
+            this.fire('t-get-user-api-error', {
+                code: event.detail.response.status.code,
+                message: event.detail.response.status.message
+            }, {
                 bubbles: true
             });
         } else {

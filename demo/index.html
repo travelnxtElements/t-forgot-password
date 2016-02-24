@@ -16,7 +16,6 @@
     <link rel="import" href="../t-forgot-password.html">
     <link rel="import" href="../../t-mystique-auth/t-mystique-auth.html">
     <link rel="import" href="../../t-loader/t-loader.html">
-    <link rel="import" href="../../paper-toast/paper-toast.html">
     <style>
     html, body {
         font-family: 'Open sans';
@@ -59,6 +58,7 @@
             on-t-get-user-api-error="getUserFailureEventHandler"
             api-base-url="http://qa-mystiquecode.tavisca.com/"
             api-relative-url="api/user" 
+            sections-requried=""
             auth-token="{{token.authenticationToken}}">
         </t-get-user-api>
 
@@ -96,7 +96,6 @@
             on-t-forgot-password-verify-secret="verifySecretEventHandler"
             on-t-forgot-password-get-user="getUserEventHandler">
         </t-forgot-password>
-
     </template>
 </body>
 <script>
@@ -107,40 +106,26 @@
         this.$.loader.active = true;
         this.$.getUserApi.getUser(data);
     };
-    template.getUserSuccessEventHandler =function (e, data) {
+    template.getUserSuccessEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = data.result 
-                            ? "user details fetched successfully!" 
-                            : "No security question found, sending password reset email.";
-        this.$.toast.open();
-
-        if(data.result)
-            this.$.fgtPassword.onGetUserResponse(data);
-        else
-            this.$.fgtPassword.onEmailSent(data);
+        this.$.fgtPassword.onGetUserSuccess(response);
     };
-    template.getUserFailureEventHandler =function (e, data) {
+    template.getUserFailureEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "User not found";
-        this.$.toast.open();
-        this.$.fgtPassword.onGetUserResponse();
+        this.$.fgtPassword.onGetUserFailure(response);
     };
 
     template.verifySecretEventHandler =function (e, data) {
         this.$.loader.active = true;
         this.$.verifySecret.verifyAnswer(data);
     };
-    template.verifySecretSuccessEventHandler =function (e, data) {
+    template.verifySecretSuccessEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Answer verified successfully!";
-        this.$.toast.open();
-        this.$.fgtPassword.onGetSecretAnswerResponse(data);
+        this.$.fgtPassword.onGetSecretAnswerSuccess(response);
     };
-    template.verifySecretFailureEventHandler =function (e, data) {
+    template.verifySecretFailureEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Incorrect answer";
-        this.$.toast.open();
-        this.$.fgtPassword.onGetSecretAnswerResponse();
+        this.$.fgtPassword.onGetSecretAnswerFailure(response);
     };
 
 
@@ -148,34 +133,26 @@
         this.$.loader.active = true;
         this.$.updatePassword.updatePassword(data);
     };
-    template.updatePasswordSuccessEventHandler =function (e, data) {
+    template.updatePasswordSuccessEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Password changed successfully!";
-        this.$.toast.open();
-        this.$.fgtPassword.onPasswordResetResponse(data);
+        this.$.fgtPassword.onPasswordResetSuccess(response);
     };
-    template.updatePasswordFailureEventHandler =function (e, data) {
+    template.updatePasswordFailureEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Failed to update the password";
-        this.$.toast.open();
-        this.$.fgtPassword.onPasswordResetResponse();
+        this.$.fgtPassword.onPasswordResetFailure(response);
     };
 
     template.sendMailEventHandler =function (e, data) {
         this.$.loader.active = true;
         this.$.sendMail.sendMail(data);
     };
-    template.sendMailSuccessEventHandler =function (e, data) {
+    template.sendMailSuccessEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Mail sent successfully!";
-        this.$.toast.open();
-        this.$.fgtPassword.onEmailSent(data);
+        this.$.fgtPassword.onPasswordResetLinkSuccess(response);
     };
-    template.sendMailFailureEventHandler =function (e, data) {
+    template.sendMailFailureEventHandler =function (e, response) {
         this.$.loader.active = false;
-        this.$.toast.text = "Failed to send mail";
-        this.$.toast.open();
-        this.$.fgtPassword.onPasswordResetResponse();
+        this.$.fgtPassword.onPasswordResetLinkFailure(response);
     };
 })();
 </script>
