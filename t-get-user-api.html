@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../t-shared-lib/t-provider-behavior.html">
+
 <!--
     `t-get-user-api` api component is used to get user secret key.
 
@@ -23,6 +24,7 @@ Example:
             api-relative-url="api/user" 
             auth-token="{{token.authenticationToken}}">
         </t-get-user-api>-->
+
 <dom-module id="t-get-user-api">
     <template>
         <iron-ajax id="ajaxCall" method="GET" content-type="application/json" handle-as="json" verbose>
@@ -92,7 +94,7 @@ Polymer({
 
 
     _getRelativeUrl: function(){
-        var url = 'api/User/get/';
+        var url = this.apiRelativeUrl || 'api/User/get/';
         if(this.username){
             url+= 'username/' + this.username+ '/';
         }
