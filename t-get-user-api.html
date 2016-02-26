@@ -61,6 +61,7 @@ Polymer({
         this.apiRelativeUrl = this._getRelativeUrl();
         if (this._validateApiMeta()) {            
             this.$.ajaxCall.url = this._getUrl();
+            this._setLoading(true);
             this.$.ajaxCall.generateRequest();
         }
     },
@@ -83,6 +84,7 @@ Polymer({
         //validate API meta before making a call
         if (this._validateApiMeta()) {            
             this.$.ajaxCall.url = this._getUrl();
+            this._setLoading(true);
             this.$.ajaxCall.generateRequest();
         }
     },
